@@ -49,7 +49,7 @@ x_t (B, 3, 32, 32)
 [ Bottleneck : ResBlock → Self-Attn → ResBlock ]            │    │    │
     │                                                       │    │    │
     ▼ cat(skip)  ←──────────────────────────────────────────┘    │    │
-    │ ResBlock × 2 + Attention                                   │    │
+    │ ResBlock × 2                                               │    │
     ▼ Upsample ↑2                                                │    │
     cat(skip)  ←─────────────────────────────────────────────────┘    │
     │ ResBlock × 2 + Attention                                        │
