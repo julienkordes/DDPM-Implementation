@@ -35,8 +35,8 @@ def generate(args):
         schedule=args.schedule,
     )
 
-    #sample_grid(model, scheduler, args)
-    #show_metrics(model, scheduler, args, sampling_method = args.sampling_method)
+    sample_grid(model, scheduler, args)
+    show_metrics(model, scheduler, args, sampling_method = args.sampling_method)
     visualize_denoising(model, scheduler, args)
 
 if __name__ == "__main__":

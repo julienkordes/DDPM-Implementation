@@ -26,7 +26,7 @@ PyTorch implementation of [Ho et al. 2020](https://arxiv.org/abs/2006.11239) tra
 ### Ce qui est implémenté
 
 - **DDPM** — forward process, reverse process, MSE loss sur le bruit prédit
-- **U-Net** — architecture encoder/bottleneck/decoder avec ResBlocks, self-attention aux résolutions 8×8 et 16×16, embeddings sinusoïdaux pour le timestep
+- **U-Net** — architecture encoder/bottleneck/decoder avec ResBlocks, self-attention à la résolution 16×16, embeddings sinusoïdaux pour le timestep
 - **EMA** — Exponential Moving Average des poids avec warmup, utilisé exclusivement pour le sampling
 - **Classifier-Free Guidance** — conditioning sur la classe CIFAR-10 avec dropout du label à 20%, guidance scale configurable
 - **DDIM sampling** — sampling déterministe en N steps (N << 1000), avec paramètre eta

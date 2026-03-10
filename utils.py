@@ -283,7 +283,7 @@ def show_metrics(model, scheduler, args, sampling_method="DDPM"):
     print(f"Métriques sauvegardées : {output_path}")
 
 @torch.no_grad()
-def visualize_denoising(model, scheduler, args, num_snapshots=10, num_rows=10, class_label=None):
+def visualize_denoising(model, scheduler, args, num_snapshots=10, num_rows=8, class_label=None):
     """
     Génère une figure montrant le débruitage progressif sur plusieurs lignes.
     Chaque ligne = une image générée indépendamment.
