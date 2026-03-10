@@ -5,7 +5,7 @@ PyTorch implementation of [Ho et al. 2020](https://arxiv.org/abs/2006.11239) tra
 ---
 
 <!-- Mets ta plus belle grille de samples ici — c'est la première chose qu'on regarde -->
-<img src="assets/samples.png" width="800"/>
+<img src="assets/samples.png" width="500"/>
 
 *Samples générés après 500 epochs d'entraînement, guidance scale w=3*
 
@@ -15,7 +15,7 @@ PyTorch implementation of [Ho et al. 2020](https://arxiv.org/abs/2006.11239) tra
 
 ### Processus de débruitage
 
-<img src="assets/denoising_grid.png" width="800"/>
+<img src="assets/denoising_grid.png" width="500"/>
 
 *De gauche à droite : x_T ~ N(0,I) → x_0 (image finale)*
 
