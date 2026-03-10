@@ -1,6 +1,6 @@
 # DDPM — Denoising Diffusion Probabilistic Models
 
-PyTorch implementation of [Ho et al. 2020](https://arxiv.org/abs/2006.11239) trained on CIFAR-10, with class-conditional generation via [Classifier-Free Guidance](https://arxiv.org/abs/2207.12598) and fast sampling via [DDIM](https://arxiv.org/abs/2010.02502).
+PyTorch implementation de [Ho et al. 2020](https://arxiv.org/abs/2006.11239) entraîné sur CIFAR-10, avec génération conditionnée par la classe via [Classifier-Free Guidance](https://arxiv.org/abs/2207.12598) et sampling rapide via [DDIM](https://arxiv.org/abs/2010.02502).
 
 ---
 
