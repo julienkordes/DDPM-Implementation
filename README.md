@@ -15,13 +15,9 @@ PyTorch implementation of [Ho et al. 2020](https://arxiv.org/abs/2006.11239) tra
 
 ### Processus de débruitage
 
-<img src="assets/denoising_process.png" width="800"/>
+<img src="assets/truck_denoising.png" width="800"/>
 
 *De gauche à droite : x_T ~ N(0,I) → x_0 (image finale)*
-
-### Courbe d'entraînement
-
-<img src="assets/training_loss.png" width="500"/>
 
 ---
 
