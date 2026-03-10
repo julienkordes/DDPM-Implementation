@@ -62,26 +62,6 @@ x_t (B, 3, 32, 32)
 
 ---
 
-## Installation
-
-```bash
-git clone https://github.com/<username>/ddpm-cifar10
-cd ddpm-cifar10
-pip install -r requirements.txt
-```
-
-**Requirements :**
-```
-torch
-torchvision
-tqdm
-matplotlib
-Pillow
-clean-fid
-```
-
----
-
 ## Entraînement
 
 ```bash
@@ -108,10 +88,9 @@ python main.py --checkpoint_path checkpoints/ddpm_epoch_0250.pt
 ## Sampling
 
 ```bash
-# Générer 16 images d'une classe spécifique
+# Générer 16 images 
 python generate.py \
     --checkpoint checkpoints/ddpm_epoch_0500.pt \
-    --class_label 5 \        # 5 = dog
     --num_samples 16 \
     --guidance_scale 3.0 \
     --ddim_steps 50          # DDIM en 50 steps au lieu de 1000
