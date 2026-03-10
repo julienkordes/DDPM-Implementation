@@ -1,6 +1,6 @@
 import torch
 from config.argparser import load_opts
-from utils import DDPMScheduler, show_metrics, visualize_denoising
+from utils import DDPMScheduler, show_metrics, visualize_denoising, sample_grid
 from models import get_model
 
 
@@ -35,8 +35,8 @@ def generate(args):
         schedule=args.schedule,
     )
 
+    sample_grid(model, scheduler, args)
     show_metrics(model, scheduler, args, sampling_method = args.sampling_method)
-
     visualize_denoising(model, scheduler, args)
 
 if __name__ == "__main__":

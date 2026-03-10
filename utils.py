@@ -331,3 +331,30 @@ def visualize_denoising(model, scheduler, args, num_snapshots=10, class_label=No
     plt.close()
     print(f"Figure sauvegardée : {args.output_dir}")
     model.train()
+
+def sample_grid(model, scheduler, args):
+    """Génère et sauvegarde une grille d'images via DDPM"""
+    model.eval()
+    with torch.no_grad():
+        shape = (args.num_samples, args.in_channels, args.image_size, args.image_size)
+        samples, _ = scheduler.p_sample_loop(model, shape, device=args.device)
+        samples = (samples.clamp(-1, 1) + 1) / 2  # [0, 1]
+
+    nrow = int(args.num_samples ** 0.5)
+
+    grid = make_grid(samples, nrow=nrow, padding=2, pad_value=1.0)
+
+    grid_np = grid.permute(1, 2, 0).cpu().numpy()
+
+    fig, ax = plt.subplots(figsize=(nrow * 1.5, nrow * 1.5))
+    ax.imshow(grid_np)
+    ax.axis("off")
+    fig.suptitle(f"CIFAR10 with DDIM_sampling ", fontsize=14, fontweight="bold", y=1.01)
+    fig.tight_layout()
+
+    path = os.path.join(args.output_dir, f"samples.png")
+    fig.savefig(path, bbox_inches="tight", dpi=150)
+    plt.close(fig)
+
+    print(f"  Samples sauvegardés : {path}")
+    model.train()

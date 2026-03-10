@@ -5,7 +5,7 @@ PyTorch implementation of [Ho et al. 2020](https://arxiv.org/abs/2006.11239) tra
 ---
 
 <!-- Mets ta plus belle grille de samples ici — c'est la première chose qu'on regarde -->
-<img src="assets/samples_cifar10.png" width="800"/>
+<img src="assets/samples.png" width="800"/>
 
 *Samples générés après 500 epochs d'entraînement, guidance scale w=3*
 
