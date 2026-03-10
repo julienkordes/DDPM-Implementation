@@ -4,3 +4,4 @@ uv run generate.py \
     --eta 0. \
     --sampling_method "DDIM" \
     --num_steps_DDIM 50 \
+    --num_samples 128 \

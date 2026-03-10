@@ -283,55 +283,83 @@ def show_metrics(model, scheduler, args, sampling_method="DDPM"):
     print(f"Métriques sauvegardées : {output_path}")
 
 @torch.no_grad()
-def visualize_denoising(model, scheduler, args, num_snapshots=10, class_label=None):
+def visualize_denoising(model, scheduler, args, num_snapshots=10, num_rows=10, class_label=None):
     """
-    Génère une figure montrant le débruitage progressif d'une image.
-    num_snapshots : nombre d'étapes intermédiaires à afficher
+    Génère une figure montrant le débruitage progressif sur plusieurs lignes.
+    Chaque ligne = une image générée indépendamment.
+    num_snapshots : nombre d'étapes intermédiaires à afficher (colonnes)
+    num_rows      : nombre d'images générées (lignes)
     """
     model.eval()
     device = args.device
 
-    if class_label is None:
-        class_label = torch.randint(0, model.num_classes, (1,), device=device)
-    else:
-        class_label = torch.tensor([class_label], device=device)
-
     snapshot_times = set(
         int(t) for t in torch.linspace(scheduler.num_timesteps - 1, 0, num_snapshots)
     )
-
-    x = torch.randn(1, args.in_channels, args.image_size, args.image_size, device=device)
-    snapshots = []
-    snapshot_labels = []
-
-    for t in reversed(range(scheduler.num_timesteps)):
-        x = scheduler.p_sample_cfg(model, x, t, class_label, args.guidance_scale)
-        if t in snapshot_times:
-            img = (x.clamp(-1, 1) + 1) / 2  # -> [0, 1]
-            snapshots.append(img.squeeze(0).cpu())
-            snapshot_labels.append(f"t={t}")
-
     if 0 not in snapshot_times:
-        img = (x.clamp(-1, 1) + 1) / 2
-        snapshots.append(img.squeeze(0).cpu())
-        snapshot_labels.append("t=0")
+        snapshot_times.add(0)
 
-    n = len(snapshots)
-    fig, axes = plt.subplots(1, n, figsize=(n * 2, 2.5))
-    class_name = CIFAR10_CLASSES[class_label.item()]
+    all_rows_snapshots = []      # [num_rows, num_snapshots, C, H, W]
+    all_rows_labels    = None    # les labels de timestep sont les mêmes pour toutes les lignes
+    all_class_names    = []
 
-    for ax, img, label in zip(axes, snapshots, snapshot_labels):
-        ax.imshow(img.permute(1, 2, 0).numpy())
-        ax.set_title(label, fontsize=9)
-        ax.axis("off")
+    for _ in range(num_rows):
+        if class_label is None:
+            cl = torch.randint(0, model.num_classes, (1,), device=device)
+        else:
+            cl = torch.tensor([class_label], device=device)
 
-    fig.suptitle(f"Denoising process — class: {class_name}", fontsize=11, y=1.02)
-    plt.tight_layout()
-    plt.savefig(args.output_dir, bbox_inches="tight", dpi=150)
+        x = torch.randn(1, args.in_channels, args.image_size, args.image_size, device=device)
+        snapshots       = []
+        snapshot_labels = []
+
+        for t in reversed(range(scheduler.num_timesteps)):
+            x = scheduler.p_sample_cfg(model, x, t, cl, args.guidance_scale)
+            if t in snapshot_times:
+                img = (x.clamp(-1, 1) + 1) / 2
+                snapshots.append(img.squeeze(0).cpu())
+                snapshot_labels.append(f"t={t}")
+
+        all_rows_snapshots.append(snapshots)
+        all_class_names.append(CIFAR10_CLASSES[cl.item()])
+        if all_rows_labels is None:
+            all_rows_labels = snapshot_labels
+
+    # Figure
+    n_cols = len(all_rows_snapshots[0])
+    fig, axes = plt.subplots(
+        num_rows, n_cols,
+        figsize=(n_cols * .5, num_rows * .5),
+        gridspec_kw={"hspace": 0.05, "wspace": 0.05}
+    )
+
+    if num_rows == 1:
+        axes = axes[None, :]
+
+    for row_idx, (snapshots, class_name) in enumerate(zip(all_rows_snapshots, all_class_names)):
+        for col_idx, (img, label) in enumerate(zip(snapshots, all_rows_labels)):
+            ax = axes[row_idx, col_idx]
+            ax.imshow(img.permute(1, 2, 0).numpy())
+            ax.axis("off")
+
+            # Timestep en haut uniquement sur la première ligne
+            if row_idx == 0:
+                ax.set_title(label, fontsize=8)
+
+            # Nom de classe à gauche sur la première colonne
+            if col_idx == 0:
+                ax.set_ylabel(class_name, fontsize=9, rotation=0, labelpad=40, va="center")
+
+    fig.suptitle("Denoising process", fontsize=7, fontweight="bold", y=1.01)
+
+    output_path = os.path.join(args.output_dir, "denoising_grid.png")
+    plt.savefig(output_path, bbox_inches="tight", dpi=150)
     plt.close()
-    print(f"Figure sauvegardée : {args.output_dir}")
+    print(f"Figure sauvegardée : {output_path}")
     model.train()
 
+
+@torch.no_grad()
 def sample_grid(model, scheduler, args):
     """Génère et sauvegarde une grille d'images via DDPM"""
     model.eval()
@@ -346,10 +374,10 @@ def sample_grid(model, scheduler, args):
 
     grid_np = grid.permute(1, 2, 0).cpu().numpy()
 
-    fig, ax = plt.subplots(figsize=(nrow * 1.5, nrow * 1.5))
+    fig, ax = plt.subplots(figsize=(nrow * .5, nrow * .5))
     ax.imshow(grid_np)
     ax.axis("off")
-    fig.suptitle(f"CIFAR10 with DDIM_sampling ", fontsize=14, fontweight="bold", y=1.01)
+    fig.suptitle(f"CIFAR10 with DDIM_sampling ", fontsize=8, fontweight="bold", y=1.01)
     fig.tight_layout()
 
     path = os.path.join(args.output_dir, f"samples.png")
